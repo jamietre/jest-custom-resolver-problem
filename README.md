@@ -1,36 +1,39 @@
-# jest-source-map-problem
+# jest-custom-resolver-problem
 
-Running `yarn test` will cause the test to fail, but source maps don't work correctly for JavaScript files that are
-imported by TypeScript files
+Using a jest custom resolver: https://facebook.github.io/jest/docs/en/configuration.html#resolver-string causes automocking using `jest.mock('module')` to not work.
 
 ```
-> yarn test
-yarn run v1.3.2
+yarn test
+yarn run v1.6.0
 warning ../package.json: No license field
 $ jest --config jest.config.js --runInBand
- FAIL  src/alert.test.tsx
-  Alert
-    ✕ large size (6ms)
+ FAIL  src/jest-mock.test.js
+  test jest mocking
+    ✕ can mock node packages (7ms)
 
-  ● Alert › large size
+  ● test jest mocking › can mock node packages
 
-    error in shallow
+    expect(jest.fn())[.not].toHaveBeenCalledTimes()
 
-      19 |  * It shows some lines
-      20 |  *
-    > 21 |  * From the original code
-      22 |  *
-      23 |  * Since the generated code is longer
-      24 |  *
+    jest.fn() value must be a mock function or spy.
+    Received:
+      function: [Function anonymous]
 
-      at shallow (src/utils/helpers.js:21:9)
-      at Object.it (src/alert.test.tsx:10:33)
+       5 |   it('can mock node packages', () => {
+       6 |     lodash.add(1,2);
+    >  7 |     expect(lodash.add).toHaveBeenCalledTimes(1);
+       8 |   });
+       9 | });
+      10 |
+
+      at Object.<anonymous> (src/jest-mock.test.js:7:24)
 
 Test Suites: 1 failed, 1 total
 Tests:       1 failed, 1 total
 Snapshots:   0 total
-Time:        1.438s, estimated 2s
+Time:        0.816s, estimated 2s
 Ran all test suites.
 error Command failed with exit code 1.
-info Visit https://yarnpkg.com/en/docs/cli/run for documentation about this command.
 ```
+
+Implementations of the most basic resolver that just passes through its argument to either `resolve.sync` or `Resolver.findNodeModule` have the same outcome.

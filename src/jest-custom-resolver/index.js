@@ -5,6 +5,6 @@ const resolve = require('resolve');
 
 module.exports = function(importPath, opts) {
   //return Resolver.findNodeModule(importPath, opts);
-  return resolve.sync(importPath, opts)
+  return resolve.sync(importPath, opts);
 };
 
